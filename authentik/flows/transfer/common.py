@@ -1,9 +1,10 @@
 """transfer common classes"""
-from dataclasses import asdict, dataclass, field, is_dataclass
+import dataclasses
 from enum import Enum
 from typing import Any
 from uuid import UUID
 
+import attrs
 from django.core.serializers.json import DjangoJSONEncoder
 
 from authentik.lib.models import SerializerModel
@@ -37,7 +38,7 @@ def get_attrs(obj: SerializerModel) -> dict[str, Any]:
     return data
 
 
-@dataclass
+@attrs.define
 class FlowBundleEntry:
     """Single entry of a bundle"""
 
@@ -62,20 +63,22 @@ class FlowBundleEntry:
         )
 
 
-@dataclass
+@attrs.define
 class FlowBundle:
     """Dataclass used for a full export"""
 
-    version: int = field(default=1)
-    entries: list[FlowBundleEntry] = field(default_factory=list)
+    version: int = attrs.field(default=1)
+    entries: list[FlowBundleEntry] = attrs.field(factory=list)
 
 
 class DataclassEncoder(DjangoJSONEncoder):
     """Convert FlowBundleEntry to json"""
 
     def default(self, o):
-        if is_dataclass(o):
-            return asdict(o)
+        if dataclasses.is_dataclass(o):
+            return dataclasses.asdict(o)
+        if attrs.has(o.__class__):
+            return attrs.asdict(o)
         if isinstance(o, UUID):
             return str(o)
         if isinstance(o, Enum):

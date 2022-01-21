@@ -1,10 +1,10 @@
 """Kubernetes Traefik Middleware Reconciler"""
-from dataclasses import asdict, dataclass, field
 from typing import TYPE_CHECKING
 
-from dacite import from_dict
+from attrs import define, asdict, field
 from kubernetes.client import ApiextensionsV1Api, CustomObjectsApi
 
+from authentik.lib.utils.converter import from_dict
 from authentik.outposts.controllers.base import FIELD_MANAGER
 from authentik.outposts.controllers.k8s.base import KubernetesObjectReconciler
 from authentik.outposts.controllers.k8s.triggers import NeedsUpdate
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from authentik.outposts.controllers.kubernetes import KubernetesController
 
 
-@dataclass
+@define
 class TraefikMiddlewareSpecForwardAuth:
     """traefik middleware forwardAuth spec"""
 
@@ -22,12 +22,12 @@ class TraefikMiddlewareSpecForwardAuth:
     # pylint: disable=invalid-name
     authResponseHeadersRegex: str = field(default="")
     # pylint: disable=invalid-name
-    authResponseHeaders: list[str] = field(default_factory=list)
+    authResponseHeaders: list[str] = field(factory=list)
     # pylint: disable=invalid-name
     trustForwardHeader: bool = field(default=True)
 
 
-@dataclass
+@define
 class TraefikMiddlewareSpec:
     """Traefik middleware spec"""
 
@@ -35,16 +35,16 @@ class TraefikMiddlewareSpec:
     forwardAuth: TraefikMiddlewareSpecForwardAuth
 
 
-@dataclass
+@define
 class TraefikMiddlewareMetadata:
     """Traefik Middleware metadata"""
 
     name: str
     namespace: str
-    labels: dict = field(default_factory=dict)
+    labels: dict = field(factory=dict)
 
 
-@dataclass
+@define
 class TraefikMiddleware:
     """Traefik Middleware"""
 

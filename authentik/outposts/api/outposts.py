@@ -1,6 +1,4 @@
 """Outpost API Views"""
-from dacite.core import from_dict
-from dacite.exceptions import DaciteError
 from django_filters.filters import ModelMultipleChoiceFilter
 from django_filters.filterset import FilterSet
 from drf_spectacular.utils import extend_schema
@@ -17,6 +15,7 @@ from authentik.core.api.providers import ProviderSerializer
 from authentik.core.api.used_by import UsedByMixin
 from authentik.core.api.utils import PassiveSerializer, is_dict
 from authentik.core.models import Provider
+from authentik.lib.utils.converter import from_dict
 from authentik.outposts.api.service_connections import ServiceConnectionSerializer
 from authentik.outposts.managed import MANAGED_OUTPOST
 from authentik.outposts.models import Outpost, OutpostConfig, OutpostType, default_outpost_config
@@ -65,7 +64,7 @@ class OutpostSerializer(ModelSerializer):
         """Check that the config has all required fields"""
         try:
             from_dict(OutpostConfig, config)
-        except DaciteError as exc:
+        except Error as exc:
             raise ValidationError(f"Failed to validate config: {str(exc)}") from exc
         return config
 

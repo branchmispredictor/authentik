@@ -1,6 +1,5 @@
 """Websocket tests"""
-from dataclasses import asdict
-
+from attrs import asdict
 from channels.routing import URLRouter
 from channels.testing import WebsocketCommunicator
 from django.test import TransactionTestCase

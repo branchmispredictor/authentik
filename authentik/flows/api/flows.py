@@ -1,6 +1,5 @@
 """Flow API Views"""
-from dataclasses import dataclass
-
+from attrs import define
 from django.core.cache import cache
 from django.db.models import Model
 from django.http.response import HttpResponseBadRequest, JsonResponse
@@ -90,7 +89,7 @@ class FlowDiagramSerializer(Serializer):
         raise NotImplementedError
 
 
-@dataclass
+@define
 class DiagramElement:
     """Single element used in a diagram"""
 

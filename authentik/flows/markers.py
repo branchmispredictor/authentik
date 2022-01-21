@@ -1,7 +1,7 @@
 """Stage Markers"""
-from dataclasses import dataclass
 from typing import TYPE_CHECKING, Optional
 
+from attrs import define
 from django.http.request import HttpRequest
 from structlog.stdlib import get_logger
 
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 LOGGER = get_logger()
 
 
-@dataclass
+@define
 class StageMarker:
     """Base stage marker class, no extra attributes, and has no special handler."""
 
@@ -31,7 +31,7 @@ class StageMarker:
         return binding
 
 
-@dataclass
+@define
 class ReevaluateMarker(StageMarker):
     """Reevaluate Marker, forces stage's policies to be evaluated again."""
 

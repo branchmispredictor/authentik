@@ -1,9 +1,10 @@
 """event utilities"""
+import dataclasses
 import re
-from dataclasses import asdict, is_dataclass
 from typing import Any, Optional
 from uuid import UUID
 
+import attrs
 from django.contrib.auth.models import AnonymousUser
 from django.core.handlers.wsgi import WSGIRequest
 from django.db import models
@@ -76,13 +77,15 @@ def sanitize_dict(source: dict[Any, Any]) -> dict[Any, Any]:
     }"""
     final_dict = {}
     for key, value in source.items():
-        if is_dataclass(value):
+        if dataclasses.is_dataclass(value):
+            value = dataclasses.asdict(value)
+        if attrs.has(value.__class__):
             # Because asdict calls `copy.deepcopy(obj)` on everything that's not tuple/dict,
             # and deepcopy doesn't work with HttpRequests (neither django nor rest_framework).
             # Currently, the only dataclass that actually holds an http request is a PolicyRequest
             if isinstance(value, PolicyRequest):
                 value.http_request = None
-            value = asdict(value)
+            value = attrs.asdict(value)
         if isinstance(value, dict):
             final_dict[key] = sanitize_dict(value)
         elif isinstance(value, (User, AnonymousUser)):

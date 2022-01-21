@@ -1,10 +1,10 @@
 """Monitored tasks"""
-from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from timeit import default_timer
 from typing import Any, Optional
 
+from attrs import define, field
 from celery import Task
 from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
@@ -32,14 +32,14 @@ class TaskResultStatus(Enum):
     UNKNOWN = 8
 
 
-@dataclass
+@define
 class TaskResult:
     """Result of a task run, this class is created by the task itself
     and used by self.set_status"""
 
     status: TaskResultStatus
 
-    messages: list[str] = field(default_factory=list)
+    messages: list[str] = field(factory=list)
 
     # Optional UID used in cache for tasks that run in different instances
     uid: Optional[str] = field(default=None)
@@ -50,7 +50,7 @@ class TaskResult:
         return self
 
 
-@dataclass
+@define
 class TaskInfo:
     """Info about a task run"""
 
@@ -63,8 +63,8 @@ class TaskInfo:
 
     task_call_module: str
     task_call_func: str
-    task_call_args: list[Any] = field(default_factory=list)
-    task_call_kwargs: dict[str, Any] = field(default_factory=dict)
+    task_call_args: list[Any] = field(factory=list)
+    task_call_kwargs: dict[str, Any] = field(factory=dict)
 
     task_description: Optional[str] = field(default=None)
 

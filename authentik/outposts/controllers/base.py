@@ -1,7 +1,7 @@
 """Base Controller"""
-from dataclasses import dataclass
 from typing import Optional
 
+from attrs import define
 from structlog.stdlib import get_logger
 from structlog.testing import capture_logs
 
@@ -21,7 +21,7 @@ class ControllerException(SentryIgnoredException):
     """Exception raised when anything fails during controller run"""
 
 
-@dataclass
+@define
 class DeploymentPort:
     """Info about deployment's single port."""
 

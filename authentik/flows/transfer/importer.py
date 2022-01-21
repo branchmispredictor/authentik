@@ -4,8 +4,6 @@ from copy import deepcopy
 from json import loads
 from typing import Any
 
-from dacite import from_dict
-from dacite.exceptions import DaciteError
 from django.apps import apps
 from django.db import transaction
 from django.db.models import Model
@@ -18,6 +16,7 @@ from structlog.stdlib import BoundLogger, get_logger
 from authentik.flows.models import Flow, FlowStageBinding, Stage
 from authentik.flows.transfer.common import EntryInvalidError, FlowBundle, FlowBundleEntry
 from authentik.lib.models import SerializerModel
+from authentik.lib.utils.converter import from_dict
 from authentik.policies.models import Policy, PolicyBinding
 from authentik.stages.prompt.models import Prompt
 
@@ -42,10 +41,7 @@ class FlowImporter:
         self.__pk_map: dict[Any, Model] = {}
         self.logger = get_logger()
         import_dict = loads(json_input)
-        try:
-            self.__import = from_dict(FlowBundle, import_dict)
-        except DaciteError as exc:
-            raise EntryInvalidError from exc
+        self.__import = from_dict(FlowBundle, import_dict)
 
     def __update_pks_for_attrs(self, attrs: dict[str, Any]) -> dict[str, Any]:
         """Replace any value if it is a known primary key of an other object"""

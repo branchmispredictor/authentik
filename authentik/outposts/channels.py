@@ -1,17 +1,16 @@
 """Outpost websocket handler"""
-from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from enum import IntEnum
 from typing import Any, Optional
 
+from attrs import asdict, define, field
 from channels.exceptions import DenyConnection
-from dacite import from_dict
-from dacite.data import Data
 from guardian.shortcuts import get_objects_for_user
 from prometheus_client import Gauge
 from structlog.stdlib import BoundLogger, get_logger
 
 from authentik.core.channels import AuthJsonConsumer
+from authentik.lib.utils.converter import from_dict
 from authentik.outposts.models import OUTPOST_HELLO_INTERVAL, Outpost, OutpostState
 
 GAUGE_OUTPOSTS_CONNECTED = Gauge(
@@ -37,12 +36,12 @@ class WebsocketMessageInstruction(IntEnum):
     TRIGGER_UPDATE = 2
 
 
-@dataclass
+@define
 class WebsocketMessage:
     """Complete Websocket Message that is being sent"""
 
     instruction: int
-    args: dict[str, Any] = field(default_factory=dict)
+    args: dict[str, Any] = field(factory=dict)
 
 
 class OutpostConsumer(AuthJsonConsumer):
@@ -91,7 +90,7 @@ class OutpostConsumer(AuthJsonConsumer):
             instance_uuid=self.last_uid,
         )
 
-    def receive_json(self, content: Data):
+    def receive_json(self, content: Any):
         msg = from_dict(WebsocketMessage, content)
         uid = msg.args.get("uuid", self.channel_name)
         self.last_uid = uid

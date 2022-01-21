@@ -1,14 +1,14 @@
 """authentik core dataclasses"""
-from dataclasses import dataclass
 from typing import Optional
 
+from attrs import define
 from rest_framework.fields import CharField
 
 from authentik.core.api.utils import PassiveSerializer
 from authentik.flows.challenge import Challenge
 
 
-@dataclass
+@define
 class UILoginButton:
     """Dataclass for Source's ui_login_button"""
 

@@ -1,9 +1,9 @@
 """policy structures"""
 from __future__ import annotations
 
-from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Optional
 
+from attrs import define
 from django.db.models import Model
 from django.http import HttpRequest
 from structlog.stdlib import get_logger
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 LOGGER = get_logger()
 
 
-@dataclass
+@define
 class PolicyRequest:
     """Data-class to hold policy request data"""
 
@@ -26,14 +26,14 @@ class PolicyRequest:
     http_request: Optional[HttpRequest]
     obj: Optional[Model]
     context: dict[str, Any]
-    debug: bool = False
+    debug: bool
 
     def __init__(self, user: User):
-        super().__init__()
         self.user = user
         self.http_request = None
         self.obj = None
         self.context = {}
+        self.debug = False
 
     def set_http_request(self, request: HttpRequest):  # pragma: no cover
         """Load data from HTTP request, including geoip when enabled"""
@@ -57,7 +57,7 @@ class PolicyRequest:
         return text + ">"
 
 
-@dataclass
+@define
 class PolicyResult:
     """Small data-class to hold policy results"""
 

@@ -97,7 +97,9 @@ description = ""
 authors = ["Jens Langhammer <jens.langhammer@beryju.org>"]
 
 [tool.poetry.dependencies]
+attrs = "*"
 boto3 = "*"
+cattrs = "*"
 celery = "*"
 channels = "*"
 channels-redis = "*"

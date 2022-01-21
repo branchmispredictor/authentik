@@ -1,9 +1,9 @@
 """Identification stage logic"""
-from dataclasses import asdict
 from random import SystemRandom
 from time import sleep
 from typing import Any, Optional
 
+from attrs import asdict
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.http import HttpResponse

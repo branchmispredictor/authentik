@@ -3,7 +3,7 @@ import base64
 import binascii
 import json
 import time
-from dataclasses import asdict, dataclass, field
+from attrs import asdict, define, field
 from datetime import datetime
 from hashlib import sha256
 from typing import Any, Optional
@@ -11,7 +11,6 @@ from urllib.parse import urlparse
 
 from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
-from dacite import from_dict
 from django.db import models
 from django.http import HttpRequest
 from django.utils import dateformat, timezone
@@ -24,6 +23,7 @@ from authentik.crypto.models import CertificateKeyPair
 from authentik.events.models import Event, EventAction
 from authentik.events.utils import get_user
 from authentik.lib.generators import generate_id, generate_key
+from authentik.lib.utils.converter import from_dict
 from authentik.lib.utils.time import timedelta_from_string, timedelta_string_validator
 from authentik.providers.oauth2.apps import AuthentikProviderOAuth2Config
 from authentik.providers.oauth2.constants import ACR_AUTHENTIK_DEFAULT
@@ -342,7 +342,7 @@ class AuthorizationCode(ExpiringModel, BaseGrantModel):
         return f"Authorization code for {self.provider} for user {self.user}"
 
 
-@dataclass
+@define
 class IDToken:
     """The primary extension that OpenID Connect makes to OAuth 2.0 to enable End-Users to be
     Authenticated is the ID Token data structure. The ID Token is a security token that contains
@@ -366,7 +366,7 @@ class IDToken:
     nonce: Optional[str] = None
     at_hash: Optional[str] = None
 
-    claims: dict[str, Any] = field(default_factory=dict)
+    claims: dict[str, Any] = field(factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         """Convert dataclass to dict, and update with keys from `claims`"""

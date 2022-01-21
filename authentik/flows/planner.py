@@ -1,7 +1,7 @@
 """Flows Planner"""
-from dataclasses import dataclass, field
 from typing import Any, Optional
 
+from attrs import define, field
 from django.core.cache import cache
 from django.http import HttpRequest
 from prometheus_client import Gauge, Histogram
@@ -46,16 +46,16 @@ def cache_key(flow: Flow, user: Optional[User] = None) -> str:
     return prefix
 
 
-@dataclass
+@define
 class FlowPlan:
     """This data-class is the output of a FlowPlanner. It holds a flat list
     of all Stages that should be run."""
 
     flow_pk: str
 
-    bindings: list[FlowStageBinding] = field(default_factory=list)
-    context: dict[str, Any] = field(default_factory=dict)
-    markers: list[StageMarker] = field(default_factory=list)
+    bindings: list[FlowStageBinding] = field(factory=list)
+    context: dict[str, Any] = field(factory=dict)
+    markers: list[StageMarker] = field(factory=list)
 
     def append_stage(self, stage: Stage, marker: Optional[StageMarker] = None):
         """Append `stage` to all stages, optionally with stage marker"""

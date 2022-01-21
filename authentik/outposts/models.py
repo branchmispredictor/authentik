@@ -1,10 +1,9 @@
 """Outpost models"""
-from dataclasses import asdict, dataclass, field
 from datetime import datetime
-from typing import Iterable, Optional
+from typing import Any, Dict, Iterable, Optional, Type, Union
 from uuid import uuid4
 
-from dacite import from_dict
+from attrs import define, field, asdict
 from django.contrib.auth.models import Permission
 from django.core.cache import cache
 from django.db import IntegrityError, models, transaction
@@ -30,6 +29,7 @@ from authentik.events.models import Event, EventAction
 from authentik.lib.config import CONFIG
 from authentik.lib.models import InheritanceForeignKey
 from authentik.lib.sentry import SentryIgnoredException
+from authentik.lib.utils.converter import from_dict
 from authentik.lib.utils.errors import exception_to_string
 from authentik.managed.models import ManagedModel
 from authentik.outposts.controllers.k8s.utils import get_namespace
@@ -44,7 +44,7 @@ class ServiceConnectionInvalid(SentryIgnoredException):
     """Exception raised when a Service Connection has invalid parameters"""
 
 
-@dataclass
+@define
 # pylint: disable=too-many-instance-attributes
 class OutpostConfig:
     """Configuration an outpost uses to configure it self"""
@@ -64,12 +64,12 @@ class OutpostConfig:
     container_image: Optional[str] = field(default=None)
 
     kubernetes_replicas: int = field(default=1)
-    kubernetes_namespace: str = field(default_factory=get_namespace)
-    kubernetes_ingress_annotations: dict[str, str] = field(default_factory=dict)
+    kubernetes_namespace: str = field(factory=get_namespace)
+    kubernetes_ingress_annotations: dict[str, str] = field(factory=dict)
     kubernetes_ingress_secret_name: str = field(default="authentik-outpost-tls")
     kubernetes_service_type: str = field(default="ClusterIP")
-    kubernetes_disabled_components: list[str] = field(default_factory=list)
-    kubernetes_image_pull_secrets: Optional[list[str]] = field(default_factory=list)
+    kubernetes_disabled_components: list[str] = field(factory=list)
+    kubernetes_image_pull_secrets: Optional[list[str]] = field(factory=list)
 
 
 class OutpostModel(Model):
@@ -96,7 +96,7 @@ def default_outpost_config(host: Optional[str] = None):
     return asdict(OutpostConfig(authentik_host=host or ""))
 
 
-@dataclass
+@define
 class OutpostServiceConnectionState:
     """State of an Outpost Service Connection"""
 
@@ -395,12 +395,12 @@ class Outpost(ManagedModel):
         return f"Outpost {self.name}"
 
 
-@dataclass
+@define
 class OutpostState:
     """Outpost instance state, last_seen and version"""
 
     uid: str
-    channel_ids: list[str] = field(default_factory=list)
+    channel_ids: list[str] = field(factory=list)
     last_seen: Optional[datetime] = field(default=None)
     version: Optional[str] = field(default=None)
     version_should: Version | LegacyVersion = field(default=OUR_VERSION)

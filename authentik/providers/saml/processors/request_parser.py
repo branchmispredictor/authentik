@@ -1,10 +1,10 @@
 """SAML AuthNRequest Parser and dataclass"""
 from base64 import b64decode
-from dataclasses import dataclass
 from typing import Optional
 from urllib.parse import quote_plus
 
 import xmlsec
+from attrs import define
 from defusedxml import ElementTree
 from lxml import etree  # nosec
 from structlog.stdlib import get_logger
@@ -34,7 +34,7 @@ ERROR_SIGNATURE_EXISTS_BUT_NO_VERIFIER = (
 ERROR_FAILED_TO_VERIFY = "Failed to verify signature"
 
 
-@dataclass
+@define
 class AuthNRequest:
     """AuthNRequest Dataclass"""
 

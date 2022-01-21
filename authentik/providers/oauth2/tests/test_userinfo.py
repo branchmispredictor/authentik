@@ -1,7 +1,7 @@
 """Test userinfo view"""
 import json
-from dataclasses import asdict
 
+from attrs import asdict
 from django.urls import reverse
 
 from authentik.core.models import Application

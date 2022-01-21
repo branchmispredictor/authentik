@@ -1,8 +1,8 @@
 """SAML ServiceProvider Metadata Parser and dataclass"""
-from dataclasses import dataclass
 from typing import Optional
 
 import xmlsec
+from attrs import define
 from cryptography.hazmat.backends import default_backend
 from cryptography.x509 import load_pem_x509_certificate
 from defusedxml.lxml import fromstring
@@ -35,7 +35,7 @@ def format_pem_certificate(unformatted_cert: str) -> str:
     return "\n".join(lines)
 
 
-@dataclass
+@define
 class ServiceProviderMetadata:
     """SP Metadata Dataclass"""
 

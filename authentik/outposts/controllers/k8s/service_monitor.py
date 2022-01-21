@@ -1,10 +1,10 @@
 """Kubernetes Prometheus ServiceMonitor Reconciler"""
-from dataclasses import asdict, dataclass, field
 from typing import TYPE_CHECKING
 
-from dacite import from_dict
+from attrs import asdict, define, field
 from kubernetes.client import ApiextensionsV1Api, CustomObjectsApi
 
+from authentik.lib.utils.converter import from_dict
 from authentik.outposts.controllers.base import FIELD_MANAGER
 from authentik.outposts.controllers.k8s.base import KubernetesObjectReconciler
 
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from authentik.outposts.controllers.kubernetes import KubernetesController
 
 
-@dataclass
+@define
 class PrometheusServiceMonitorSpecEndpoint:
     """Prometheus ServiceMonitor endpoint spec"""
 
@@ -20,7 +20,7 @@ class PrometheusServiceMonitorSpecEndpoint:
     path: str = field(default="/metrics")
 
 
-@dataclass
+@define
 class PrometheusServiceMonitorSpecSelector:
     """Prometheus ServiceMonitor selector spec"""
 
@@ -28,7 +28,7 @@ class PrometheusServiceMonitorSpecSelector:
     matchLabels: dict
 
 
-@dataclass
+@define
 class PrometheusServiceMonitorSpec:
     """Prometheus ServiceMonitor spec"""
 
@@ -37,16 +37,16 @@ class PrometheusServiceMonitorSpec:
     selector: PrometheusServiceMonitorSpecSelector
 
 
-@dataclass
+@define
 class PrometheusServiceMonitorMetadata:
     """Prometheus ServiceMonitor metadata"""
 
     name: str
     namespace: str
-    labels: dict = field(default_factory=dict)
+    labels: dict = field(factory=dict)
 
 
-@dataclass
+@define
 class PrometheusServiceMonitor:
     """Prometheus ServiceMonitor"""
 
